@@ -308,7 +308,7 @@
       <div class="breadcrumb"><a href="index.html">Home</a><span>›</span><span class="cur">Alumni Directory</span></div>
       <div class="hero-bar"></div>
       <h1>Alumni Directory</h1>
-      <p>Connect with alumni across batches, professions, and locations. One network, 40 years of shared roots.</p>
+      <p>Connect with alumni across batches, professions, and locations. One network, 41 years of shared roots.</p>
       <button class="hero-join-btn" onclick="openModal()">
         + Join the Directory
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -404,6 +404,7 @@
           <div class="fg"><label>Mobile / WhatsApp <span class="opt">(optional)</span></label><input type="tel" name="phone" placeholder="+91 9XXXXXXXXX"/></div>
           <div class="fg"><label>LinkedIn Profile <span class="opt">(optional)</span></label><input type="url" name="linkedin" placeholder="linkedin.com/in/yourname"/></div>
           <div class="fg full"><label>Short Bio <span class="opt">(optional)</span></label><textarea name="bio" placeholder="A few lines about your journey since APR School…"></textarea></div>
+        <div class="fg"><label>Are you an NRI? <span class="opt">(optional)</span></label><select name="nri" style="padding:0.62rem 0.85rem;border:1.5px solid var(--border);border-radius:10px;font-size:0.82rem;font-family:'Poppins',sans-serif;color:var(--text);background:var(--off);outline:none;width:100%;"><option value="no">No</option><option value="yes">Yes — Living Abroad</option></select></div>
         </div>
         <div class="form-note">📋 <strong>Approval process:</strong> Your profile will be reviewed by the AAAG committee before going live.</div>
         <button type="submit" class="form-submit">Submit My Profile →</button>
@@ -494,6 +495,7 @@ function renderCard(a, i) {
           <span class="pc-city">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
             ${a.city}
+            +(a.nri==='yes' ? '<span style="background:#E3F2FD;color:#1565C0;font-size:0.55rem;font-weight:700;padding:0.1rem 0.45rem;border-radius:50px;margin-left:4px;">🌍 NRI</span>' : '')
           </span>
         </div>
       </div>
@@ -574,6 +576,7 @@ function handleSubmit(e){
   phone:       form.elements['phone'].value,
   linkedin:    form.elements['linkedin'] ? form.elements['linkedin'].value : '',
   bio:         form.elements['bio'] ? form.elements['bio'].value : '',
+  nri: form.elements['nri'] ? form.elements['nri'].value : 'no',
   mentor:      form.elements['mentor'] ? form.elements['mentor'].value : 'no',
   photo:       ''
 };
@@ -619,6 +622,7 @@ function loadFromSheet() {
             li:        a.linkedin || a.li || '',
             committee: false,
             photo:     a.photo || ''
+            nri:       a.nri || 'no',
           };
         });
         // Update stats
@@ -661,9 +665,9 @@ window.addEventListener('load', function() {
           warn.innerHTML = '⚠️ Your profile already exists in the directory.<br/>'
             + '<strong style="cursor:pointer;text-decoration:underline;color:#F26C1B;" '
             + 'onclick="document.getElementById(\'duplicateWarning\').remove();">'
-            + 'Click here to update your profile anyway →</strong>';
-          var btn = document.querySelector('#joinForm .form-submit');
-          if(btn) btn.parentNode.insertBefore(warn, btn);
+            + 'To update, contact: aaagandipalem@gmail.com | Please do NOT create duplicate profile.' →</strong>';
+         var btn = document.querySelector('#joinForm .form-submit');
+         if(btn) { btn.disabled = true; btn.style.opacity = '0.4'; }
         }
       } else {
         if(existing) existing.remove();
