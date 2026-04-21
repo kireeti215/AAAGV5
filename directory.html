@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Alumni Directory – AAAG</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --blue:       #1A3FA0;
+      --blue-dark:  #0F2670;
+      --blue-light: #E8EDFB;
+      --blue-pale:  #F0F4FF;
+      --orange:     #F26C1B;
+      --orange-lt:  #FF8C42;
+      --orange-pale:#FEF0E6;
+      --teal:       #1A6B5A;
+      --white:      #FFFFFF;
+      --off:        #F7F8FC;
+      --border:     #E2E8F0;
+      --text:       #0F172A;
+      --mid:        #475569;
+      --light:      #94A3B8;
+      --green:      #16A34A;
+      --green-pale: #DCFCE7;
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { font-family:'Poppins',sans-serif; background:var(--off); color:var(--text); overflow-x:hidden; }
+
+    /* NAVBAR */
+    nav { position:fixed; top:0; left:0; right:0; z-index:999; background:rgba(255,255,255,0.97); backdrop-filter:blur(14px); border-bottom:1px solid var(--border); height:64px; display:flex; align-items:center; justify-content:space-between; padding:0 1.5rem; box-shadow:0 1px 12px rgba(26,63,160,0.07); }
+    .nav-wordmark { display:flex; align-items:center; gap:10px; text-decoration:none; flex-shrink:0; }
+    .nav-logo { width:44px; height:44px; object-fit:contain; border-radius:6px; }
+    .nav-text .nname { font-family:'Playfair Display',serif; font-size:1.05rem; font-weight:700; color:var(--teal); letter-spacing:1.5px; }
+    .nav-text .nsub  { font-size:0.5rem; color:var(--light); letter-spacing:0.8px; text-transform:uppercase; margin-top:1px; font-weight:500; display:block; }
+    .nav-links { display:flex; align-items:center; }
+    .nav-links a { color:var(--mid); text-decoration:none; font-size:0.8rem; font-weight:500; padding:0.4rem 0.7rem; border-radius:6px; transition:all 0.2s; position:relative; }
+    .nav-links a::after { content:''; position:absolute; bottom:2px; left:0.7rem; right:0.7rem; height:2px; background:var(--orange); border-radius:2px; transform:scaleX(0); transition:transform 0.25s; }
+    .nav-links a:hover::after, .nav-links a.active::after { transform:scaleX(1); }
+    .nav-links a:hover { color:var(--blue); background:var(--blue-light); }
+    .nav-links a.active { color:var(--blue); font-weight:600; }
+    .nav-cta { background:var(--orange)!important; color:var(--white)!important; font-weight:600!important; padding:0.42rem 1rem!important; border-radius:8px; margin-left:0.5rem; }
+    .nav-cta::after { display:none!important; }
+    .nav-cta:hover { background:var(--orange-lt)!important; }
+    .hamburger { display:none; flex-direction:column; gap:4px; cursor:pointer; padding:4px; }
+    .hamburger span { display:block; width:20px; height:2px; background:var(--blue); border-radius:2px; }
+    .mobile-menu { display:none; position:fixed; top:64px; left:0; right:0; background:var(--white); border-bottom:1px solid var(--border); padding:1rem 1.5rem; z-index:998; flex-direction:column; box-shadow:0 8px 24px rgba(0,0,0,0.08); }
+    .mobile-menu.open { display:flex; }
+    .mobile-menu a { color:var(--mid); text-decoration:none; font-size:0.9rem; padding:0.65rem 0; border-bottom:1px solid var(--border); font-weight:500; }
+    .mobile-menu a:last-child { border:none; color:var(--orange); font-weight:600; }
+
+    /* PAGE HERO */
+    .page-hero { margin-top:64px; background:linear-gradient(135deg,var(--blue-dark),var(--blue)); padding:3rem 1.5rem 5rem; position:relative; overflow:hidden; }
+    .page-hero::before { content:''; position:absolute; inset:0; background:radial-gradient(circle at 80% 50%,rgba(242,108,27,0.15),transparent 60%); }
+    .page-hero::after  { content:''; position:absolute; bottom:-2px; left:0; right:0; height:60px; background:var(--off); clip-path:polygon(0 100%,100% 0%,100% 100%); }
+    .hero-inner { max-width:1100px; margin:0 auto; position:relative; z-index:1; display:flex; align-items:flex-end; justify-content:space-between; gap:2rem; flex-wrap:wrap; }
+    .breadcrumb { display:flex; align-items:center; gap:0.5rem; margin-bottom:1rem; }
+    .breadcrumb a { color:rgba(255,255,255,0.5); text-decoration:none; font-size:0.72rem; }
+    .breadcrumb span { color:rgba(255,255,255,0.3); font-size:0.72rem; }
+    .breadcrumb .cur { color:rgba(255,255,255,0.7); }
+    .hero-bar { width:40px; height:4px; background:var(--orange); border-radius:2px; margin-bottom:1rem; }
+    .page-hero h1 { font-family:'Playfair Display',serif; font-size:clamp(1.8rem,3.5vw,2.6rem); font-weight:900; color:var(--white); margin-bottom:0.5rem; }
+    .page-hero p  { font-size:0.85rem; color:rgba(255,255,255,0.65); max-width:420px; line-height:1.7; margin-bottom:1.4rem; font-weight:400; }
+    .hero-join-btn { display:inline-flex; align-items:center; gap:7px; background:var(--orange); color:var(--white); font-weight:600; padding:0.72rem 1.4rem; border-radius:10px; border:none; cursor:pointer; font-size:0.83rem; font-family:'Poppins',sans-serif; transition:all 0.25s; box-shadow:0 4px 16px rgba(242,108,27,0.4); }
+    .hero-join-btn:hover { background:var(--orange-lt); transform:translateY(-2px); }
+    .hero-stats { display:flex; gap:2rem; flex-shrink:0; }
+    .hstat .num { font-family:'Playfair Display',serif; font-size:1.8rem; font-weight:700; color:var(--white); line-height:1; }
+    .hstat .num span { color:var(--orange-lt); }
+    .hstat .lbl { font-size:0.6rem; color:rgba(255,255,255,0.5); letter-spacing:1px; text-transform:uppercase; margin-top:3px; font-weight:500; }
+
+    /* SEARCH BAR */
+    .search-wrap { position:sticky; top:64px; z-index:90; background:var(--white); border-bottom:1px solid var(--border); box-shadow:0 2px 12px rgba(26,63,160,0.06); padding:0.85rem 1.5rem; margin-top:-40px; }
+    .search-top  { max-width:1100px; margin:0 auto; display:flex; gap:0.65rem; align-items:center; }
+    .search-box  { flex:1; position:relative; }
+    .search-box svg { position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--light); width:15px; height:15px; pointer-events:none; }
+    .search-input { width:100%; padding:0.6rem 0.9rem 0.6rem 2.3rem; border:1.5px solid var(--border); border-radius:10px; font-size:0.82rem; font-family:'Poppins',sans-serif; color:var(--text); background:var(--off); outline:none; transition:all 0.2s; }
+    .search-input:focus { border-color:var(--blue); background:var(--white); }
+    .search-input::placeholder { color:var(--light); }
+
+    /* Desktop filters */
+    .filters-row { max-width:1100px; margin:0.65rem auto 0; display:flex; gap:0.6rem; flex-wrap:wrap; align-items:center; }
+    .filter-sel { padding:0.55rem 0.8rem; border:1.5px solid var(--border); border-radius:9px; font-size:0.78rem; font-family:'Poppins',sans-serif; color:var(--mid); background:var(--off); outline:none; cursor:pointer; transition:border-color 0.2s; }
+    .filter-sel:focus { border-color:var(--blue); }
+    .mentor-toggle { display:flex; align-items:center; gap:6px; padding:0.55rem 0.85rem; border:1.5px solid var(--border); border-radius:9px; background:var(--off); cursor:pointer; }
+    .mentor-toggle input { accent-color:var(--orange); width:13px; height:13px; cursor:pointer; }
+    .mentor-toggle label { font-size:0.76rem; color:var(--mid); font-weight:500; cursor:pointer; white-space:nowrap; }
+    .mentor-toggle:has(input:checked) { border-color:var(--orange); background:var(--orange-pale); }
+    .mentor-toggle:has(input:checked) label { color:var(--orange); }
+
+    /* Mobile filter toggle */
+    .filter-toggle-btn { display:none; align-items:center; gap:6px; padding:0.6rem 0.9rem; border:1.5px solid var(--border); border-radius:10px; background:var(--off); cursor:pointer; font-size:0.8rem; font-family:'Poppins',sans-serif; color:var(--mid); font-weight:500; white-space:nowrap; flex-shrink:0; }
+    .filter-toggle-btn.active { border-color:var(--blue); color:var(--blue); background:var(--blue-light); }
+    .mobile-filters { display:none; flex-direction:column; gap:0.5rem; margin-top:0.65rem; max-width:1100px; margin-left:auto; margin-right:auto; }
+    .mobile-filters.open { display:flex; }
+    .mobile-filters .filter-sel { width:100%; padding:0.65rem 0.9rem; }
+    .mobile-filters .mentor-toggle { width:100%; }
+
+    /* MAIN */
+    .main { max-width:1100px; margin:0 auto; padding:1.75rem 1.5rem 4rem; }
+    .results-bar { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.1rem; flex-wrap:wrap; gap:0.5rem; }
+    .results-count { font-size:0.76rem; color:var(--light); }
+    .results-count strong { color:var(--text); font-weight:600; }
+    .add-btn { display:inline-flex; align-items:center; gap:6px; background:var(--white); color:var(--blue); border:1.5px solid var(--blue); border-radius:8px; padding:0.45rem 0.9rem; font-size:0.76rem; font-weight:600; cursor:pointer; transition:all 0.2s; font-family:'Poppins',sans-serif; }
+    .add-btn:hover { background:var(--blue); color:var(--white); }
+
+    /* DIRECTORY GRID */
+    .dir-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; }
+
+    /* ── PROFILE CARD ── */
+    .p-card {
+      background:var(--white); border:1px solid var(--border);
+      border-radius:18px; overflow:hidden;
+      transition:all 0.25s;
+      box-shadow:0 2px 10px rgba(26,63,160,0.05);
+      animation:fadeCard 0.4s ease both;
+    }
+    @keyframes fadeCard { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:translateY(0);} }
+    .p-card:hover { box-shadow:0 12px 36px rgba(26,63,160,0.13); transform:translateY(-3px); border-color:var(--blue-light); }
+
+    /* Top blue band — horizontal */
+    .pc-top {
+      background:linear-gradient(135deg,var(--blue),var(--blue-dark));
+      padding:1rem 1.1rem;
+      display:flex; align-items:center; gap:0.85rem;
+      position:relative;
+    }
+    .pc-top::after { content:''; position:absolute; bottom:0; left:0; right:0; height:3px; background:var(--orange); }
+
+    .pc-av {
+      width:54px; height:54px; border-radius:50%; flex-shrink:0;
+      background:rgba(255,255,255,0.15);
+      border:2px solid rgba(242,108,27,0.5);
+      display:flex; align-items:center; justify-content:center;
+      font-family:'Playfair Display',serif;
+      font-size:1.05rem; font-weight:700; color:var(--white);
+      overflow:hidden;
+    }
+    .pc-av img { width:100%; height:100%; object-fit:cover; object-position:center top; border-radius:50%; }
+
+    .pc-top-info { flex:1; min-width:0; }
+    .pc-name  { font-family:'Playfair Display',serif; font-size:0.92rem; font-weight:700; color:var(--white); line-height:1.2; }
+    .pc-meta-row { display:flex; align-items:center; gap:0.5rem; margin-top:0.25rem; flex-wrap:wrap; }
+    .pc-batch { font-size:0.6rem; color:rgba(255,255,255,0.6); font-weight:500; background:rgba(255,255,255,0.1); padding:0.12rem 0.5rem; border-radius:50px; white-space:nowrap; }
+    .pc-city  { font-size:0.6rem; color:rgba(255,255,255,0.55); display:flex; align-items:center; gap:2px; }
+    .pc-city svg { width:9px; height:9px; flex-shrink:0; }
+
+    /* Bottom row */
+    .pc-bottom { display:flex; align-items:stretch; }
+
+    /* Middle — details */
+    .pc-mid {
+      flex:1; padding:0.9rem 1.1rem; min-width:0;
+      display:flex; flex-direction:column; gap:0.32rem;
+      justify-content:center;
+    }
+    .pc-role    { font-size:0.78rem; font-weight:600; color:var(--blue); line-height:1.3; }
+    .pc-company { font-size:0.7rem; color:var(--mid); font-weight:400; }
+    .pc-skills  { display:flex; gap:0.25rem; flex-wrap:wrap; margin-top:0.1rem; }
+    .pc-skill   { background:var(--off); color:var(--mid); border:1px solid var(--border); font-size:0.58rem; font-weight:500; padding:0.12rem 0.42rem; border-radius:50px; }
+    (a.bio ? '<p style="font-size:0.7rem;color:var(--mid);font-style:italic;margin-top:0.2rem;">'+a.bio+'</p>' : '')
+    
+    /* Right — icons vertical */
+    .pc-right {
+      flex-shrink:0; width:44px;
+      background:var(--off); border-left:1px solid var(--border);
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      gap:0.45rem; padding:0.9rem 0;
+    }
+    .cico { width:28px; height:28px; border-radius:7px; display:flex; align-items:center; justify-content:center; text-decoration:none; transition:all 0.2s; border:1px solid var(--border); background:var(--white); }
+    .cico svg { width:13px; height:13px; }
+    .cico-email svg { color:var(--blue); }
+    .cico-email:hover { background:var(--blue); border-color:var(--blue); }
+    .cico-email:hover svg { color:var(--white); }
+    .cico-wa svg { color:#25D366; }
+    .cico-wa:hover { background:#25D366; border-color:#25D366; }
+    .cico-wa:hover svg { color:var(--white); }
+    .cico-li svg { color:#0A66C2; }
+    .cico-li:hover { background:#0A66C2; border-color:#0A66C2; }
+    .cico-li:hover svg { color:var(--white); }
+
+    /* EMPTY STATE */
+    .empty { display:none; text-align:center; padding:4rem 1rem; }
+    .empty.show { display:block; }
+    .empty h3 { font-family:'Playfair Display',serif; font-size:1.2rem; margin-bottom:0.5rem; }
+    .empty p  { font-size:0.83rem; color:var(--light); margin-bottom:1.5rem; }
+
+    /* CTA */
+    .cta-sec { background:linear-gradient(135deg,var(--blue-dark),var(--blue)); border-radius:20px; padding:2.75rem 2rem; text-align:center; margin-top:2.5rem; position:relative; overflow:hidden; }
+    .cta-sec::before { content:''; position:absolute; inset:0; background:radial-gradient(circle at 50%,rgba(242,108,27,0.15),transparent 65%); pointer-events:none; }
+    .cta-sec h2 { font-family:'Playfair Display',serif; font-size:1.5rem; color:var(--white); margin-bottom:0.5rem; position:relative; z-index:1; }
+    .cta-sec p  { font-size:0.83rem; color:rgba(255,255,255,0.65); margin-bottom:1.75rem; position:relative; z-index:1; font-weight:400; }
+    .cta-sec .tag { font-size:0.7rem; color:rgba(255,255,255,0.32); margin-top:1.25rem; font-style:italic; position:relative; z-index:1; }
+    .btn-orange { display:inline-flex; align-items:center; gap:7px; background:var(--orange); color:var(--white); font-weight:600; padding:0.82rem 1.75rem; border-radius:10px; border:none; cursor:pointer; font-size:0.85rem; font-family:'Poppins',sans-serif; transition:all 0.25s; box-shadow:0 4px 16px rgba(242,108,27,0.35); position:relative; z-index:1; }
+    .btn-orange:hover { background:var(--orange-lt); transform:translateY(-2px); }
+
+    /* MODAL */
+    .modal-overlay { position:fixed; inset:0; background:rgba(15,22,42,0.72); z-index:1000; display:none; align-items:center; justify-content:center; padding:1rem; backdrop-filter:blur(4px); }
+    .modal-overlay.open { display:flex; }
+    .modal { background:var(--white); border-radius:20px; width:100%; max-width:560px; max-height:92vh; overflow-y:auto; box-shadow:0 24px 64px rgba(0,0,0,0.2); animation:modalIn 0.3s ease; }
+    @keyframes modalIn { from{opacity:0;transform:translateY(16px) scale(0.97);} to{opacity:1;transform:none;} }
+    .modal-head { padding:1.4rem 1.6rem 1rem; border-bottom:1px solid var(--border); display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; position:sticky; top:0; background:var(--white); z-index:1; border-radius:20px 20px 0 0; }
+    .modal-head h2 { font-family:'Playfair Display',serif; font-size:1.15rem; font-weight:700; color:var(--blue-dark); }
+    .modal-head p  { font-size:0.72rem; color:var(--light); margin-top:0.2rem; font-weight:400; }
+    .modal-close { background:var(--off); border:1px solid var(--border); border-radius:8px; width:30px; height:30px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:1rem; color:var(--mid); transition:all 0.2s; flex-shrink:0; }
+    .modal-close:hover { background:var(--border); }
+    .modal-body { padding:1.4rem 1.6rem 1.75rem; }
+
+    /* Photo upload */
+    .photo-upload-area { display:flex; align-items:center; gap:1.25rem; margin-bottom:1.25rem; padding:1rem; background:var(--off); border:1.5px dashed var(--border); border-radius:12px; cursor:pointer; transition:border-color 0.2s; }
+    .photo-upload-area:hover { border-color:var(--blue); }
+    .photo-preview { width:52px; height:52px; border-radius:50%; background:var(--blue-light); display:flex; align-items:center; justify-content:center; flex-shrink:0; overflow:hidden; border:2px solid var(--border); }
+    .photo-preview img { width:100%; height:100%; object-fit:cover; border-radius:50%; display:none; }
+    .photo-preview svg { width:20px; height:20px; color:var(--light); }
+    .photo-preview.has-img svg { display:none; }
+    .photo-preview.has-img img { display:block; }
+    .photo-upload-text h4 { font-size:0.82rem; font-weight:600; color:var(--text); margin-bottom:0.2rem; }
+    .photo-upload-text p  { font-size:0.7rem; color:var(--light); font-weight:400; }
+    #photoInput { display:none; }
+
+    .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.85rem; }
+    .fg { display:flex; flex-direction:column; gap:0.32rem; }
+    .fg.full { grid-column:span 2; }
+    .fg label { font-size:0.7rem; font-weight:600; color:var(--text); }
+    .fg label .req { color:var(--orange); }
+    .fg label .opt { color:var(--light); font-weight:400; font-size:0.63rem; }
+    .fg input,.fg select,.fg textarea { padding:0.62rem 0.85rem; border:1.5px solid var(--border); border-radius:10px; font-size:0.82rem; font-family:'Poppins',sans-serif; color:var(--text); background:var(--off); outline:none; transition:all 0.2s; width:100%; }
+    .fg input:focus,.fg select:focus,.fg textarea:focus { border-color:var(--blue); background:var(--white); }
+    .fg textarea { resize:vertical; min-height:75px; }
+    .mentor-radio { display:flex; gap:0.65rem; margin-top:0.2rem; }
+    .radio-opt { display:flex; align-items:center; gap:6px; padding:0.48rem 0.85rem; border:1.5px solid var(--border); border-radius:8px; cursor:pointer; transition:all 0.2s; flex:1; justify-content:center; }
+    .radio-opt input { accent-color:var(--orange); }
+    .radio-opt:has(input:checked) { border-color:var(--orange); background:var(--orange-pale); }
+    .radio-opt span { font-size:0.76rem; font-weight:500; }
+    .form-note { background:var(--blue-light); border-radius:10px; padding:0.8rem 0.9rem; font-size:0.71rem; color:var(--blue); line-height:1.6; margin-top:0.5rem; }
+    .form-submit { width:100%; padding:0.82rem; background:var(--blue); color:var(--white); font-weight:600; font-size:0.88rem; border:none; border-radius:12px; cursor:pointer; font-family:'Poppins',sans-serif; transition:all 0.25s; margin-top:1rem; }
+    .form-submit:hover { background:var(--blue-dark); transform:translateY(-1px); }
+    .form-success { display:none; text-align:center; padding:2.5rem 1rem; }
+    .form-success.show { display:block; }
+    .form-success .s-ico { font-size:3rem; margin-bottom:1rem; }
+    .form-success h3 { font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--green); margin-bottom:0.5rem; }
+    .form-success p  { font-size:0.8rem; color:var(--mid); line-height:1.65; font-weight:400; }
+
+    /* FOOTER */
+    footer { background:#0A1830; padding:3rem 1.5rem 1.5rem; }
+    .foot-in { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:2fr 1fr 1fr; gap:2.5rem; padding-bottom:2rem; border-bottom:1px solid rgba(255,255,255,0.08); }
+    .fb-name { font-family:'Playfair Display',serif; font-size:1.2rem; color:var(--white); letter-spacing:2px; margin-bottom:0.5rem; }
+    .fb-name span { color:var(--orange-lt); }
+    .foot-in p { font-size:0.76rem; color:rgba(255,255,255,0.4); line-height:1.75; font-weight:400; }
+    .fc h5 { font-size:0.6rem; text-transform:uppercase; letter-spacing:2px; color:rgba(255,255,255,0.5); margin-bottom:0.9rem; font-weight:600; }
+    .fc a  { display:block; color:rgba(255,255,255,0.38); text-decoration:none; font-size:0.76rem; margin-bottom:0.45rem; transition:color 0.2s; }
+    .fc a:hover { color:var(--orange-lt); }
+    .foot-btm { max-width:1100px; margin:1rem auto 0; display:flex; justify-content:space-between; font-size:0.67rem; color:rgba(255,255,255,0.22); }
+
+    /* RESPONSIVE */
+    @media (max-width:960px) { .dir-grid { grid-template-columns:repeat(2,1fr); } .foot-in { grid-template-columns:1fr 1fr; } }
+    @media (max-width:640px) {
+      .dir-grid { grid-template-columns:1fr; }
+      .filters-row { display:none; } .filter-toggle-btn { display:flex; }
+      .nav-links { display:none; } .hamburger { display:flex; }
+      nav { padding:0 1rem; } .nav-text .nsub { display:none; }
+      .form-grid { grid-template-columns:1fr; } .fg.full { grid-column:span 1; }
+      .foot-in { grid-template-columns:1fr; gap:1.5rem; }
+      .foot-btm { flex-direction:column; gap:0.35rem; text-align:center; }
+      .hero-stats { gap:1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <a href="index.html" class="nav-wordmark">
+    <img src="logo.png" alt="AAAG Logo" class="nav-logo"/>
+    <div class="nav-text">
+      <span class="nname">AAAG</span>
+      <span class="nsub">Alumni Association of AP Residential School Gandipalem</span>
+    </div>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="committee.html">Committee</a>
+    <a href="directory.html" class="active">Directory</a>
+     <a href="teachers.html">గురువులు</a>
+    <a href="programs.html">Programs & Events</a>
+    <a href="contact.html">Contact</a>
+    <a href="#" onclick="openModal();return false;" class="nav-cta">+ Add Profile</a>
+  </div>
+  <div class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html">Home</a>
+  <a href="about.html">About</a>
+  <a href="committee.html">Committee</a>
+  <a href="directory.html">Directory</a>
+   <a href="teachers.html">గురువులు</a>
+  <a href="programs.html">Programs & Events</a>
+  <a href="contact.html">Contact</a>
+  <a href="#" onclick="openModal();toggleMenu();return false;">+ Add Your Profile</a>
+</div>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="hero-inner">
+    <div>
+      <div class="breadcrumb"><a href="index.html">Home</a><span>›</span><span class="cur">Alumni Directory</span></div>
+      <div class="hero-bar"></div>
+      <h1>Alumni Directory</h1>
+      <p>Connect with alumni across batches, professions, and locations. One network, 41 years of shared roots.</p>
+      <button class="hero-join-btn" onclick="openModal()">
+        + Join the Directory
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat"><div class="num" id="totalCount">0</div><div class="lbl">Alumni</div></div>
+      <div class="hstat"><div class="num" id="batchCount">40</div><div class="lbl">Batches</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SEARCH BAR -->
+<div class="search-wrap">
+  <div class="search-top">
+    <div class="search-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" class="search-input" id="searchInput" placeholder="Search by name, profession, company…" oninput="applyFilters()"/>
+    </div>
+    <button class="filter-toggle-btn" id="filterToggleBtn" onclick="toggleMobileFilters()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+      Filters
+    </button>
+  </div>
+  <div class="filters-row">
+    <select class="filter-sel" id="batchFilter" onchange="applyFilters()"><option value="">All Batches</option></select>
+    <select class="filter-sel" id="cityFilter"  onchange="applyFilters()"><option value="">All Cities</option></select>
+    <select class="filter-sel" id="profFilter"  onchange="applyFilters()"><option value="">All Professions</option></select>
+    <select class="filter-sel" id="sortBy" onchange="applyFilters()"><option value="name">A–Z</option><option value="batch_asc">Batch: Oldest</option><option value="batch_desc">Batch: Newest</option></select>
+  </div>
+  <div class="mobile-filters" id="mobileFilters">
+    <select class="filter-sel" id="batchFilterM" onchange="syncAndFilter('batchFilter',this.value)"><option value="">All Batches</option></select>
+    <select class="filter-sel" id="cityFilterM"  onchange="syncAndFilter('cityFilter',this.value)"><option value="">All Cities</option></select>
+    <select class="filter-sel" id="profFilterM"  onchange="syncAndFilter('profFilter',this.value)"><option value="">All Professions</option></select>
+    <select class="filter-sel" id="sortByM" onchange="syncAndFilter('sortBy',this.value)"><option value="name">A–Z</option><option value="batch_asc">Batch: Oldest</option><option value="batch_desc">Batch: Newest</option></select>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="results-bar">
+    <p class="results-count" id="resultsCount">Showing <strong>8</strong> alumni</p>
+    <button class="add-btn" onclick="openModal()">+ Add Your Profile</button>
+  </div>
+  <div class="dir-grid" id="dirGrid"></div>
+  <div class="empty" id="emptyState">
+    <div style="font-size:2.5rem;margin-bottom:0.75rem;">🔍</div>
+    <h3>No profiles found</h3>
+    <p>Try adjusting your search or filters.</p>
+    <button class="btn-orange" onclick="openModal()">Be the First to Join</button>
+  </div>
+
+  <div class="cta-sec">
+    <h2>Are you an alumnus of AP Residential School Gandipalem?</h2>
+    <p>Join the Alumni Directory and become part of a growing network across batches and professions.</p>
+    <button class="btn-orange" onclick="openModal()">
+      Join Now
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+    <p class="tag">"Connecting alumni. Creating opportunities."</p>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlay(event)">
+  <div class="modal">
+    <div class="modal-head">
+      <div><h2>Join the Alumni Directory</h2><p>Reviewed by the committee before publishing.</p></div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="joinForm" name="aaag-alumni-join" method="POST" data-netlify="true" onsubmit="handleSubmit(event)">
+        <input type="hidden" name="form-name" value="aaag-alumni-join"/>
+        <div class="photo-upload-area" onclick="document.getElementById('photoInput').click()">
+          <div class="photo-preview" id="photoPreview">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <img id="photoImg" src="" alt="Preview"/>
+          </div>
+          <div class="photo-upload-text">
+            <h4>Upload Photo <span style="font-size:0.65rem;color:var(--light);font-weight:400;">(optional)</span></h4>
+            <p>Click to select · JPG or PNG · Max 2MB</p>
+          </div>
+        </div>
+        <input type="file" id="photoInput" name="photo" accept="image/*" onchange="previewPhoto(event)"/>
+        <div class="form-grid">
+          <div class="fg"><label>Full Name <span class="req">*</span></label><input type="text" name="full_name" placeholder="e.g. Ravi Kumar" required/></div>
+          <div class="fg"><label>Batch Year <span class="req">*</span></label><select name="batch_year" id="batchSel" required><option value="">Select Year</option></select></div>
+          <div class="fg"><label>Email Address <span class="req">*</span></label><input type="email" name="email" placeholder="you@email.com" required/></div>
+          <div class="fg"><label>Current City <span class="req">*</span></label><input type="text" name="city" placeholder="e.g. Hyderabad" required/></div>
+          <div class="fg full"><label>Profession / Designation <span class="req">*</span></label><input type="text" name="designation" placeholder="e.g. Software Engineer, Doctor, Teacher" required/></div>
+          <div class="fg full"><label>Company / Organization <span class="opt">(optional)</span></label><input type="text" name="company" placeholder="e.g. TCS, Govt. of Telangana"/></div>
+          <div class="fg full"><label>Skills / Specialization <span class="opt">(optional)</span></label><input type="text" name="skills" placeholder="e.g. Java, Finance — comma separated"/></div>
+          <div class="fg"><label>Mobile / WhatsApp <span class="opt">(optional)</span></label><input type="tel" name="phone" placeholder="+91 9XXXXXXXXX"/></div>
+          <div class="fg"><label>LinkedIn Profile <span class="opt">(optional)</span></label><input type="url" name="linkedin" placeholder="linkedin.com/in/yourname"/></div>
+          <div class="fg full"><label>Short Bio <span class="opt">(optional)</span></label><textarea name="bio" placeholder="A few lines about your journey since APR School…"></textarea></div>
+        <div class="fg"><label>Are you an NRI? <span class="opt">(optional)</span></label><select name="nri" style="padding:0.62rem 0.85rem;border:1.5px solid var(--border);border-radius:10px;font-size:0.82rem;font-family:'Poppins',sans-serif;color:var(--text);background:var(--off);outline:none;width:100%;"><option value="no">No</option><option value="yes">Yes — Living Abroad</option></select></div>
+        </div>
+        <div class="form-note">📋 <strong>Approval process:</strong> Your profile will be reviewed by the AAAG committee before going live.</div>
+        <button type="submit" class="form-submit">Submit My Profile →</button>
+      </form>
+      <div class="form-success" id="formSuccess">
+        <div class="s-ico">✅</div>
+        <h3>Profile Submitted!</h3>
+        <p>Thank you! Your profile has been sent to the committee for review. You'll be notified once it goes live.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-in">
+    <div><div class="fb-name">AA<span>AG</span></div><p>Alumni Association of APR School, Gandipalem. Connecting alumni since 1986.</p></div>
+    <div class="fc"><h5>Navigate</h5><a href="index.html">Home</a><a href="about.html">About AAAG</a><a href="committee.html">Committee</a><a href="directory.html">Alumni Directory</a><a href="programs.html">Programs & Events</a><a href="contact.html">Contact</a></div>
+    <div class="fc"><h5>Community</h5><a href="#" onclick="openModal();return false;">Join the Directory</a><a href="programs.html">Maata-Baata</a><a href="programs.html">Scholarship Fund</a><a href="contact.html">Volunteer with Us</a></div>
+  </div>
+  <div class="foot-btm"><span>© 2026 AAAG – Alumni Association of AP Residential School Gandipalem.</span><span>Batch 1986 – 2026</span></div>
+</footer>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzRdKOcUyyV_nTw46wtF58kvCZAf2J_iZ0sOGATNpbXTKmFZ_Uaw8eFgzky1AufJF_juw/exec';
+
+// Sample data — replaced by Google Sheet data after deploy
+const sampleAlumni = [
+  { name:"Ravi Kumar",       batch:1992, city:"Hyderabad",  role:"IAS Officer",           company:"Govt. of Telangana",       skills:["Civil Services","Public Policy"], mentor:true,  committee:true,  email:"ravi@example.com",    wa:"919000000001", li:"ravikumar" },
+  { name:"Sunitha Prasad",   batch:2001, city:"Hyderabad",  role:"Sr. Software Engineer", company:"Tata Consultancy Services", skills:["Java","Cloud","Agile"],           mentor:false, committee:false, email:"sunitha@example.com", wa:"",             li:"sunithap"  },
+  { name:"Dr. Mahesh Reddy", batch:2008, city:"Hyderabad",  role:"General Physician",     company:"AIIMS Hyderabad",           skills:["Medicine","Healthcare"],          mentor:true,  committee:false, email:"mahesh@example.com",  wa:"919000000003", li:""          },
+  { name:"Priya Nanduri",    batch:1998, city:"Bengaluru",  role:"Product Manager",       company:"Infosys",                   skills:["Product","UX","Strategy"],        mentor:true,  committee:false, email:"priya@example.com",   wa:"919000000004", li:"priyan"    },
+  { name:"Suresh Babu G",    batch:2005, city:"Vijayawada", role:"Civil Engineer",        company:"L&T Infrastructure",        skills:["Civil Engg","Project Mgmt"],      mentor:false, committee:false, email:"",                    wa:"919000000005", li:""          },
+  { name:"Anitha Rao",       batch:2012, city:"Chennai",    role:"Bank Manager",          company:"State Bank of India",       skills:["Banking","Finance"],              mentor:true,  committee:false, email:"anitha@example.com",  wa:"",             li:"anitharao" },
+  { name:"Krishna Mohan N",  batch:2002, city:"Nellore",    role:"Founder & CEO",         company:"Medhaara Innovations Pvt. Ltd.", skills:["Business Consultancy","Financial Planning"], mentor:false, committee:true, email:"krishna@medhaara.com", wa:"919000000009", li:"krishnamohan" },
+  { name:"Ramesh P",         batch:2018, city:"Pune",       role:"Data Analyst",          company:"Wipro Technologies",        skills:["Python","SQL","ML"],              mentor:false, committee:false, email:"ramesh@example.com",  wa:"919000000008", li:"rameshp"   },
+];
+
+var alumni = sampleAlumni;
+
+function ordinal(n) { var s=["th","st","nd","rd"],v=n%100; return s[(v-20)%10]||s[v]||s[0]; }
+
+function populateFilters() {
+  var batches=[...new Set(alumni.map(a=>a.batch))].sort();
+  var cities=[...new Set(alumni.map(a=>a.city))].sort();
+  var roles=[...new Set(alumni.map(a=>a.role))].sort();
+
+  ['batchFilter','batchFilterM'].forEach(function(id) {
+    var el=document.getElementById(id);
+    batches.forEach(function(b){ var n=b-1986+1; el.innerHTML+=`<option value="${b}">${b} · ${n}${ordinal(n)} Batch</option>`; });
+  });
+  ['cityFilter','cityFilterM'].forEach(function(id) {
+    var el=document.getElementById(id);
+    cities.forEach(function(c){ el.innerHTML+=`<option value="${c}">${c}</option>`; });
+  });
+  ['profFilter','profFilterM'].forEach(function(id) {
+    var el=document.getElementById(id);
+    roles.forEach(function(r){ el.innerHTML+=`<option value="${r}">${r}</option>`; });
+  });
+
+  var bs=document.getElementById('batchSel');
+  for(var y=2026;y>=1986;y--){ var n=y-1986+1; bs.innerHTML+=`<option value="${y}">${y} · ${n}${ordinal(n)} Batch</option>`; }
+
+  document.getElementById('totalCount').textContent=alumni.length;
+}
+
+function renderCard(a, i) {
+  var initials = a.name.split(' ').map(function(w){return w[0];}).slice(0,2).join('').toUpperCase();
+  var avatar = a.photo
+    ? `<img src="${a.photo}" alt="${a.name}"/>`
+    : initials;
+
+  var batchNum = a.batch - 1986 + 1;
+  var nriBadge = '';
+  if(a.nri === 'yes') nriBadge = '<span style="background:#E3F2FD;color:#1565C0;font-size:0.55rem;font-weight:700;padding:0.15rem 0.5rem;border-radius:50px;margin-left:4px;">NRI</span>';
+
+  var icons = '';
+  if(a.email) icons += `<a href="mailto:${a.email}" class="cico cico-email" title="Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></a>`;
+  if(a.wa)    icons += `<a href="https://wa.me/91${a.wa}" target="_blank" class="cico cico-wa" title="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg></a>`;
+  if(a.li)    icons += `<a href="${a.li.startsWith('http') ? a.li : 'https://linkedin.com/in/'+a.li}" target="_blank" class="cico cico-li" title="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452H17.21v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.993V9h3.091v1.561h.044c.431-.816 1.483-1.676 3.051-1.676 3.263 0 3.867 2.148 3.867 4.942v6.625zM5.337 7.433a1.794 1.794 0 1 1 0-3.588 1.794 1.794 0 0 1 0 3.588zm1.601 13.019H3.736V9h3.202v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>`;
+
+  return `
+  <div class="p-card" style="animation-delay:${i*0.05}s">
+    <div class="pc-top">
+      <div class="pc-av">${avatar}</div>
+      <div class="pc-top-info">
+        <p class="pc-name">${a.name}</p>
+        <div class="pc-meta-row">
+          <span class="pc-batch">Batch of ${a.batch} · ${batchNum}${ordinal(batchNum)} Batch</span>
+          <span class="pc-city">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+           ${a.city} ${nriBadge}
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="pc-bottom">
+      <div class="pc-mid">
+        <p class="pc-role">${a.role}</p>
+        ${a.company ? `<p class="pc-company">${a.company}</p>` : ''}
+        ${a.skills && a.skills.length ? `<div class="pc-skills">${a.skills.map(function(s){return `<span class="pc-skill">${s.trim()}</span>`;}).join('')}</div>` : ''}
+      </div>
+      ${icons ? `<div class="pc-right">${icons}</div>` : ''}
+    </div>
+  </div>`;
+}
+
+function applyFilters() {
+  var q=document.getElementById('searchInput').value.toLowerCase();
+  var batch=document.getElementById('batchFilter').value;
+  var city=document.getElementById('cityFilter').value;
+  var prof=document.getElementById('profFilter').value;
+  var sort=document.getElementById('sortBy').value;
+
+  var list=alumni.filter(function(a){
+    var mq=!q||a.name.toLowerCase().includes(q)||a.role.toLowerCase().includes(q)||(a.company&&a.company.toLowerCase().includes(q))||a.skills.some(function(s){return s.toLowerCase().includes(q);});
+    return mq&&(!batch||a.batch==batch)&&(!city||a.city===city)&&(!prof||a.role===prof);
+  });
+
+  if(sort==='name')       list.sort(function(a,b){return a.name.localeCompare(b.name);});
+  if(sort==='batch_asc')  list.sort(function(a,b){return a.batch-b.batch;});
+  if(sort==='batch_desc') list.sort(function(a,b){return b.batch-a.batch;});
+
+  var grid=document.getElementById('dirGrid');
+  var empty=document.getElementById('emptyState');
+  var count=document.getElementById('resultsCount');
+
+  if(!list.length){
+    grid.innerHTML=''; empty.classList.add('show');
+    count.innerHTML='Showing <strong>0</strong> alumni';
+  } else {
+    empty.classList.remove('show');
+    count.innerHTML=`Showing <strong>${list.length}</strong> of <strong>${alumni.length}</strong> alumni`;
+    grid.innerHTML=list.map(function(a,i){return renderCard(a,i);}).join('');
+  }
+}
+
+function syncAndFilter(id,val){ document.getElementById(id).value=val; applyFilters(); }
+function toggleMobileFilters(){ document.getElementById('mobileFilters').classList.toggle('open'); document.getElementById('filterToggleBtn').classList.toggle('active'); }
+function openModal()  { document.getElementById('modalOverlay').classList.add('open'); document.body.style.overflow='hidden'; }
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); document.body.style.overflow=''; }
+function handleOverlay(e){ if(e.target===document.getElementById('modalOverlay')) closeModal(); }
+function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
+function previewPhoto(e){
+  var file=e.target.files[0]; if(!file) return;
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    var prev=document.getElementById('photoPreview');
+    document.getElementById('photoImg').src=ev.target.result;
+    prev.classList.add('has-img');
+  };
+  reader.readAsDataURL(file);
+}
+function handleSubmit(e){
+  e.preventDefault();
+  var form = document.getElementById('joinForm');
+  var btn  = form.querySelector('.form-submit');
+  btn.textContent = 'Submitting…';
+  btn.disabled = true;
+
+  var data = {
+  type:        'alumni',
+  full_name:   form.elements['full_name'].value,
+  batch_year:  form.elements['batch_year'].value,
+  email:       form.elements['email'].value,
+  city:        form.elements['city'].value,
+  designation: form.elements['designation'].value,
+  company:     form.elements['company'].value,
+  skills:      form.elements['skills'] ? form.elements['skills'].value : '',
+  phone:       form.elements['phone'].value,
+  linkedin:    form.elements['linkedin'] ? form.elements['linkedin'].value : '',
+  bio:         form.elements['bio'] ? form.elements['bio'].value : '',
+  nri:         form.elements['nri'] ? form.elements['nri'].value : 'no',
+  mentor:      form.elements['mentor'] ? form.elements['mentor'].value : 'no',
+  photo:       ''
+};
+
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode:   'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:   JSON.stringify(data)
+  })
+  .then(function(){
+    form.style.display='none';
+    document.getElementById('formSuccess').classList.add('show');
+    setTimeout(closeModal, 3500);
+  })
+  .catch(function(){
+    form.style.display='none';
+    document.getElementById('formSuccess').classList.add('show');
+    setTimeout(closeModal, 3500);
+  });
+}
+
+if(new URLSearchParams(window.location.search).get('join')==='true'){
+  window.addEventListener('load',function(){setTimeout(openModal,400);});
+}
+
+// Load Approved profiles from Google Sheet
+function loadFromSheet() {
+  fetch(SCRIPT_URL)
+    .then(function(r){ return r.json(); })
+    .then(function(res){
+      if(res.status === 'success' && res.data && res.data.length) {
+        alumni = res.data.map(function(a) {
+          return {
+            name:      a.name || '',
+            batch:     a.batch || 0,
+            city:      a.city || '',
+            role:      a.role || '',
+            company:   a.company || '',
+            skills:    a.skills || [],
+            email:     a.email || '',
+            wa:        a.wa || '',
+            li:        a.linkedin || a.li || '',
+            committee: false,
+            photo:     a.photo || '',
+            nri:       a.nri || 'no',
+          };
+        });
+        // Update stats
+        document.getElementById('totalCount').textContent = alumni.length;
+        var uniqueBatches = [...new Set(alumni.map(function(a){return a.batch;}))].length;
+        document.getElementById('batchCount').textContent = uniqueBatches;
+        populateFilters();
+        applyFilters();
+      }
+    })
+    .catch(function(){
+      populateFilters();
+      applyFilters();
+    });
+}
+
+loadFromSheet();
+  // ── DUPLICATE PROFILE CHECK ──
+window.addEventListener('load', function() {
+  setTimeout(function() {
+    var emailField = document.querySelector('#joinForm input[name="email"]');
+    var phoneField = document.querySelector('#joinForm input[name="phone"]');
+
+    function checkField() {
+      var email = emailField ? emailField.value.trim() : '';
+      var phone = phoneField ? phoneField.value.trim().replace(/\D/g,'') : '';
+      if(!email && !phone) return;
+
+      var found = alumni.filter(function(a) {
+        return (email && a.email === email) ||
+               (phone && String(a.wa).replace(/\D/g,'').endsWith(phone.slice(-10)));
+      });
+
+      var existing = document.getElementById('duplicateWarning');
+      if(found.length > 0) {
+        if(!existing) {
+          var warn = document.createElement('div');
+          warn.id = 'duplicateWarning';
+          warn.style.cssText = 'background:#FEF0E6;border:1.5px solid #F26C1B;border-radius:10px;padding:0.85rem 1rem;font-size:0.78rem;color:#C05000;margin:0.75rem 0;line-height:1.6;';
+          warn.innerHTML = '⚠️ Your profile already exists.<br/><strong>To update contact: aaagandipalem@gmail.com</strong>';
+            + '<strong style="cursor:pointer;text-decoration:underline;color:#F26C1B;" '
+            + 'onclick="document.getElementById(\'duplicateWarning\').remove();">'
+            + 'To update, contact: aaagandipalem@gmail.com | Please do NOT create duplicate profile.</strong>';
+         var btn = document.querySelector('#joinForm .form-submit');
+         if(btn) { btn.disabled = true; btn.style.opacity = '0.4'; }
+        }
+      } else {
+        if(existing) existing.remove();
+      }
+    }
+
+    if(emailField) emailField.addEventListener('blur', checkField);
+    if(phoneField) phoneField.addEventListener('blur', checkField);
+  }, 2000);
+});
+  // </script>
+</body>
+</html>
