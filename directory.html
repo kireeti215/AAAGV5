@@ -336,12 +336,14 @@
   <div class="filters-row">
     <select class="filter-sel" id="batchFilter" onchange="applyFilters()"><option value="">All Batches</option></select>
     <select class="filter-sel" id="cityFilter"  onchange="applyFilters()"><option value="">All Cities</option></select>
+    <select class="filter-sel" id="nriFilter" onchange="applyFilters()"><option value="">All Alumni</option><option value="yes">🌍 NRI Only</option></select>
     <select class="filter-sel" id="profFilter"  onchange="applyFilters()"><option value="">All Professions</option></select>
     <select class="filter-sel" id="sortBy" onchange="applyFilters()"><option value="name">A–Z</option><option value="batch_asc">Batch: Oldest</option><option value="batch_desc">Batch: Newest</option></select>
   </div>
   <div class="mobile-filters" id="mobileFilters">
     <select class="filter-sel" id="batchFilterM" onchange="syncAndFilter('batchFilter',this.value)"><option value="">All Batches</option></select>
     <select class="filter-sel" id="cityFilterM"  onchange="syncAndFilter('cityFilter',this.value)"><option value="">All Cities</option></select>
+    <select class="filter-sel" id="mobileNriFilter" onchange="syncAndFilter('nriFilter',this.value)"><option value="">All Alumni</option><option value="yes">🌍 NRI Only</option></select>
     <select class="filter-sel" id="profFilterM"  onchange="syncAndFilter('profFilter',this.value)"><option value="">All Professions</option></select>
     <select class="filter-sel" id="sortByM" onchange="syncAndFilter('sortBy',this.value)"><option value="name">A–Z</option><option value="batch_asc">Batch: Oldest</option><option value="batch_desc">Batch: Newest</option></select>
   </div>
